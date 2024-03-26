@@ -4,6 +4,11 @@ This repository is designed to process segments of documents, leveraging large l
 
 <img src="documentation/images/main_screen.png">
 
+## Dependencies
+ - Ollama: https://ollama.com/download
+ - pip install -r requirements.txt
+
+
 ## Add Keys to environmental variable
 Add openAi key (OPENAI_API_KEY) in the terminal before running the solution.
 
