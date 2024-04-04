@@ -10,7 +10,8 @@ This repository is designed to process segments of documents, leveraging large l
 
 
 ## Add Keys to environmental variable
-Add openAi key (OPENAI_API_KEY) in the terminal before running the solution.
+Add openAi key (OPENAI_API_KEY) in the terminal before running the solution. \ 
+On windows: `setx OPENAI_API_KEY "YOUR_OPENAI_API_KEY"`
 
 ## Run The Solution
 To run the solution execute the following command in a terminal
