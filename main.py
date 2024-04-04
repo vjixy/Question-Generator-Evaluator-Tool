@@ -166,10 +166,9 @@ if texts:
         if selected_model not in st.session_state.questions[current_index]:
             st.session_state.feedback[current_index][selected_model] = None
             with st.spinner(f'Waiting for {selected_model} response...'):
-                if selected_model in chat_gpt_models_list:
-                    questions = model.generate([texts[st.session_state.current_index].page_content + " \n generate a useful question about the document above"]).strip()
-                else:
-                    questions = model.generate([texts[st.session_state.current_index].page_content + " \n generate a useful question about the document above"]).generations[0][0].text
+                
+                questions = model.generate([texts[st.session_state.current_index].page_content + " \n generate a useful question about the document above"]).generations[0][0].text
+                
                 try:
                     st.session_state.questions[current_index][selected_model] = questions.split("?")[0] + "?"
                 except:
