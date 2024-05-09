@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import Tuple, List
 import sqlite3
 
 class SqlLiteService(ABC):
@@ -40,12 +39,30 @@ class SqlLiteService(ABC):
             user_name TEXT,
             document_name TEXT,
             section_number INTEGER,
-            rating TEXT,
+            rating INTEGER,
             generated_question TEXT,
             ai_model TEXT,
             FOREIGN KEY (user_name) REFERENCES user(user_name),
             FOREIGN KEY (document_name) REFERENCES document(document_name),
             PRIMARY KEY (user_name, document_name, section_number, ai_model)
+        )
+        ''')
+        
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS response (
+            user_name TEXT,
+            document_name TEXT,
+            section_number INTEGER,
+            ai_model TEXT,
+            generated_model TEXT,
+            rating INTEGER,
+            generated_response TEXT,
+            generation_type Text,
+            FOREIGN KEY (user_name) REFERENCES user(user_name),
+            FOREIGN KEY (document_name) REFERENCES document(document_name),
+            FOREIGN KEY (section_number) REFERENCES rating(section_number),
+            FOREIGN KEY (section_number) REFERENCES rating(ai_model),
+            PRIMARY KEY (user_name, document_name, section_number, ai_model, generated_model, generation_type)
         )
         ''')
 
@@ -102,12 +119,35 @@ class SqlLiteService(ABC):
         ''', (user_name, document_name, section_number, rating, generated_question, ai_model))
         self.connection.commit()
         
+    def add_response(self, user_name, document_name, section_number, ai_model, generated_response, generated_model, generation_type, rating):
+        cursor = self.connection.cursor()
+        cursor.execute('''
+            INSERT INTO response (user_name, document_name, section_number, ai_model, generated_response, generated_model, generation_type, rating)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (user_name, document_name, section_number, ai_model, generated_response, generated_model, generation_type, rating))
+        self.connection.commit()
+        
     def get_ratings(self, user_name, document_name):
         cursor = self.connection.cursor()
         cursor.execute('''
             SELECT section_number, rating, generated_question, ai_model FROM rating
             WHERE user_name = ? AND document_name = ?
         ''', (user_name, document_name))
+        return cursor.fetchall()
+    
+    def get_responses(self, user_name, document_name):
+        cursor = self.connection.cursor()
+        cursor.execute('''
+            SELECT * FROM response
+            WHERE user_name = ? AND document_name = ?
+        ''', (user_name, document_name))
+        return cursor.fetchall()
+        
+    def get_all_ratings(self):
+        cursor = self.connection.cursor()
+        cursor.execute('''
+            SELECT * FROM rating
+        ''')
         return cursor.fetchall()
         
     def check_for_rating(self, user_name, document_name, section_number):
@@ -148,14 +188,29 @@ class SqlLiteService(ABC):
             print(f"Rating updated for user '{user_name}' on document '{document_name}', page {section_number} to {rating}.")
         else:
             self.add_rating(user_name, document_name, section_number, rating, generated_question, ai_model)
-            # # Insert a new rating
-            # cursor.execute('''
-            #     INSERT INTO rating (user_name, document_name, section_number, rating)
-            #     VALUES (?, ?, ?, ?)
-            # ''', (user_name, document_name, section_number, rating))
-            print(f"New rating added for user '{user_name}' on document '{document_name}', page {section_number}.")
+            
+    def update_response(self, user_name, document_name, section_number, ai_model, generated_response, generated_model, generation_type, rating):
+        cursor = self.connection.cursor()
+        
+        # Check if the rating already exists
+        cursor.execute('''
+            SELECT rating FROM response
+            WHERE user_name = ? AND document_name = ? AND section_number = ? AND ai_model = ? AND generated_model = ? AND generation_type = ?
+        ''', (user_name, document_name, section_number, ai_model, generated_model, generation_type))
+        
+        result = cursor.fetchone()
 
-        # Commit the changes and close the connection
+        if result:
+            # Update the existing rating
+            cursor.execute('''
+                UPDATE response
+                SET rating = ?
+                WHERE user_name = ? AND document_name = ? AND section_number = ? AND ai_model = ? AND generated_model = ? AND generation_type = ?
+            ''', (rating, user_name, document_name, section_number, ai_model, generated_model, generation_type))
+            print(f"Rating updated for user '{user_name}' on document '{document_name}', page {section_number} to {rating}.")
+        else:
+            self.add_response(user_name, document_name, section_number, ai_model, generated_response, generated_model, generation_type, rating)
+ 
         self.connection.commit()
 
             
