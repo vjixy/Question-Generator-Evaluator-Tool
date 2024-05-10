@@ -10,10 +10,14 @@ This repository is designed to process segments of documents, leveraging large l
 
 
 ## Add Keys to environmental variable
-Add openAi key (OPENAI_API_KEY) in the terminal before running the solution. \ 
-On windows: `setx OPENAI_API_KEY "YOUR_OPENAI_API_KEY"`
+Add environmental variables in the .env file
 
 ## Run The Solution
 To run the solution execute the following command in a terminal
 `streamlit run main.py`
 
+## Files to consider checking
+
+`shared/shared_variables.py` for ai models to use \ 
+`shared/services/model_handler_service.py` how ai models are handled \ 
+`database_service.py` how vector database is managed
