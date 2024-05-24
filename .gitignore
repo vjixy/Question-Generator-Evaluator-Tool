@@ -398,3 +398,10 @@ FodyWeavers.xsd
 *.sln.iml
 
 .chainlit
+*.pdf
+*.txt
+*.xml
+*.title
+*.bibtex
+*.bin
+*.desc
