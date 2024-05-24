@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+[ -z "$1" ] && printf "Provide a PDF filename or a DOI number and a BibTeX file \n  d2b [filename/DOI] [file]\n" && exit
+
+if [ -f "$1" ]; then
+	doi=$(pdfinfo "$1" | grep -io "doi:.*" | grep -o "10.[^)^ ]*") ||
+	doi=$(pdftotext "$1" 2>/dev/null - | grep -io "doi:.*" -m 1 | grep -o "10.[^)^ ]*") ||
+	doi=$(pdftotext "$1" 2>/dev/null - | grep -io "doi\\.org/.*" -m 1 | grep -o "10.[^)^ ]*") ||
+	exit 1
+else
+	doi="$1"
+fi
+
+echo "Downloading bibliographies for $1..."
+curl -s "http://api.crossref.org/works/$doi/transform/application/x-bibtex" -w '\n\n' >> "$2"
+echo "Done!"

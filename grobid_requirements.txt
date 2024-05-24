@@ -1,0 +1,8 @@
+bibtexparser
+grobid-client-python
+PyPDF2
+pdfminer.six
+fitz
+frontend
+tools
+python-Levenshtein
