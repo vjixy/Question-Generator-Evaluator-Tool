@@ -9,3 +9,7 @@ faiss-cpu
 llama-index
 llama-parse
 firecrawl-py
+groq
+gpt4all
+chromadb
+google-search-results

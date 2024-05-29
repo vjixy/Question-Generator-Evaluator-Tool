@@ -45,7 +45,7 @@ if uploaded_file is not None:
         st.session_state.document_valid = False
         upload_directory = os.environ["UPLOAD_DIRECTORY"]
         grobid_url = os.environ["GROBID_URL"]
-        is_grobid_on_external_service = os.environ["GROBID_SERVIVER"].lower().strip() == "on"
+        is_grobid_on_external_service = os.environ["GROBID_SERVER"].lower().strip() == "on"
         if not os.path.exists(upload_directory):
             os.makedirs(upload_directory)
             
