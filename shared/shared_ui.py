@@ -43,7 +43,7 @@ class SharedUi(ABC):
             self.st.session_state.questions[document_name][str(rating[0])][rating[3]] = rating[2]
 
     def load_document_data(self, sql_service, chroma_service, document_name: str = None, load_from_db: bool = False):
-        if document_name and (document_name != self.st.session_state.old_file or self.st.session_state.old_user != self.st.session_state.user):
+        if self.st.session_state.document_valid and  document_name and (document_name != self.st.session_state.old_file or self.st.session_state.old_user != self.st.session_state.user):
             self.refresh_document_data(document_name)
             if load_from_db:
                 self.st.session_state.uploaded_files[document_name] = chroma_service.get_sections_from_document(document_name)
@@ -55,6 +55,7 @@ class SharedUi(ABC):
               
 
     def refresh_user_data(self, current_file: str = None):
+        self.st.session_state.document_valid = False
         self.st.session_state.feedback = {}
         self.st.session_state.rating = {}
         self.st.session_state.questions = {}

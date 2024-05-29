@@ -52,7 +52,6 @@ class GrobidService(ABC):
                             if k.endswith('.pdf') #]:
                             and k.replace('pdf', 'bibtex') not in os.listdir(base_directory)
                             ]:
-            print(f"\n\n+ {base_directory}")
             xml_file = f'{base_directory}/'+pdf_file.replace('.pdf', '.grobid.tei.xml')
             with open(xml_file, 'r', encoding='utf-8') as file:
                 tree = etree.parse(file)

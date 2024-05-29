@@ -13,13 +13,11 @@ async def get_filename(file_path: str = Path(..., description="Path to the file"
     Returns the filename from the provided file path.
     """
     try:
-        directory = os.path.dirname(file_path)
-        if not directory:
-            directory = "/".join(file_path.split("\\")[:-1])
-            
-        grobid_service.process_documents(directory)
+        file_path = os.path.normpath(file_path)
+        file_path = file_path.replace("\\", "/")
+        grobid_service.process_documents(file_path)
          
-        return {"filename": file_path.replace(".pdf", ".txt")}
+        return {"Message": "Success"}
     except FileNotFoundError:
         return {"error": "File not found"}
 

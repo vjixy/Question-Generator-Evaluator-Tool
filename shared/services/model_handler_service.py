@@ -6,7 +6,8 @@ from groq import Groq
 from shared.shared_variables import chat_gpt_models_list, ollama_models_list, grok_models_list
 from langchain_community.utilities import SerpAPIWrapper
 import streamlit
-
+from shared.templates.prompts import GENERATE_ANSWER_TEMPLATE, GENERATE_ANSWER_FROM_CONTEXT_TEMPLATE, GENERATE_ANSWER_FROM_INTERNET_CONTENT_TEMPLATE, GENERATE_QUESTION_TEMPLATE, GENERATE_ANSWER_FROM_CONTEXT_AND_INTERNET_CONTENT_TEMPLATE
+import json
 class ModelHandlerService(ABC):
     def __init__(self):
         self.grok_client = Groq()
@@ -59,19 +60,31 @@ class ModelHandlerService(ABC):
             except:
                 with st.spinner(f'Waiting for {model_name} response...'):
                     self._download_ollama_model(model_name)
-                    return self._load_ollama_model(model_name)
+                    return self._load_ollama_model(model_name)  
+                
+    def adjust_prompt_response(self, prompt: str, response_type):
+        try:
+            return json.loads(prompt)[response_type]
+        except:
+            try:
+                prompt = "{"+prompt.split("{")[-1].split("}")[0]+"}"
+                return json.loads(prompt)[response_type]
+            except:
+                return prompt
                 
     def prompt_adjustment(self, response_type, context: str, question: str):
+        if response_type == "question":
+            return GENERATE_QUESTION_TEMPLATE.replace("__QUESTION__", question)
         if response_type == "context":
-            return context + " \n following the above context: "+ question
+            return GENERATE_ANSWER_FROM_CONTEXT_TEMPLATE.replace("__CONTEXT__", context).replace("__QUESTION__", question)
         if response_type == "default":
-            return question
+            return GENERATE_ANSWER_TEMPLATE.replace("__QUESTION__", question)
         if response_type == "internet":
             search_result = self.serp_api_wrapper.run(question)
-            return question + "\n I researched the internet and got: " + search_result + "\n can you clarify"
+            return GENERATE_ANSWER_FROM_INTERNET_CONTENT_TEMPLATE.replace("__INTERNET__", search_result).replace("__QUESTION__", question)
         if response_type == "internet+context":
             search_result = self.serp_api_wrapper.run(question)
-            return  context + " \n following the above context: " + question + "\n I researched the internet and got: " +search_result+"\n can you clarify"
+            return GENERATE_ANSWER_FROM_CONTEXT_AND_INTERNET_CONTENT_TEMPLATE.replace("__CONTEXT__", context).replace("__QUESTION__", question).replace("__INTERNET__", search_result)
             
     
     
