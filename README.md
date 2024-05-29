@@ -4,20 +4,29 @@ This repository is designed to process segments of documents, leveraging large l
 
 <img src="documentation/images/main_screen.png">
 
+## .env
+Fill out your decencies keys in the .env file
+
+![alt text](documentation/images/env.png)
+
+Note that if you are using windows to run the solution keep GROBID_SERVER on, if not turn it to false, because we need to run grobid on wsl.
+
 ## Dependencies
+ - docker pull grobid/grobid:0.8.0
  - Ollama: https://ollama.com/download
  - pip install -r requirements.txt
+ - pip install -r grobid_requirements.txt (run it on wsl if you are on windows)
 
+## RUN Grobid
+ - docker run --rm --init --ulimit core=0 -p 8070:8070 grobid/grobid:0.8.0
+ - python app.py (run this command only if you adjusted GROBID_SERVER to on)
 
 ## Add Keys to environmental variable
 Add environmental variables in the .env file
 
 ## Run The Solution
 To run the solution execute the following command in a terminal:  
-`streamlit run main_question_generator.py` tool used to generate questions from a given section of a vector database. users can evaluate the generated questions from 1 to 5.  
-`streamlit run main_response_generator.py` tool used to generate responses for the generated questions. users can evaluate the generated questions from 1 to 5.   
-`streamlit run main_evaluate_questions_pdf_radio.py` tool used to generate questions from a given section of a given pdf file. users can evaluate the generated questions from 1 to 5.  
-`streamlit run main_evaluate_questions_pdf.py` tool used to generate questions from a given section of a given pdf file. users can evaluate the generated questions using thumbs up or down.
+`streamlit run main.py` 
 
 ## Files to consider checking
 
