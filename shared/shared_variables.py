@@ -1,7 +1,8 @@
 ollama_langchain_models_list = ['tinydolphin', 'tinyllama', 'gemma', 'llama2', 'mistral', 'mixtral', 'llava', 'neural-chat', 'codellama', 'dolphin-mixtral', 'mistral-openorca', 'qwen', 'llama2-uncensored', 'deepseek-coder', 'nous-hermes2', 'phi', 'orca-mini', 'dolphin-mistral', 'wizard-vicuna-uncensored', 'vicuna', 'zephyr', 'openhermes', 'llama2-chinese', 'wizardcoder', 'openchat', 'phind-codellama', 'nomic-embed-text', 'starcoder', 'orca2', 'falcon', 'yi', 'wizard-math', 'dolphin-phi', 'nous-hermes', 'starcoder2', 'starling-lm', 'stable-code', 'medllama2', 'codeup', 'bakllava', 'wizardlm-uncensored', 'solar', 'everythinglm', 'sqlcoder', 'stable-beluga', 'nous-hermes2-mixtral', 'yarn-mistral', 'samantha-mistral', 'stablelm2', 'meditron', 'stablelm-zephyr', 'magicoder', 'yarn-llama2', 'wizard-vicuna', 'deepseek-llm', 'llama-pro', 'mistrallite', 'codebooga', 'nexusraven', 'open-orca-platypus2', 'dolphincoder', 'goliath', 'notux', 'alfred', 'all-minilm', 'megadolphin', 'xwinlm', 'wizardlm', 'duckdb-nsql', 'notus']
 ollama_models_list = ['llama3']
-chat_gpt_models_list = ['gpt-3.5-turbo', 'gpt-4-turbo-preview', 'gpt-3.5-turbo-instruct']
+chat_gpt_models_list = ['gpt-3.5-turbo-instruct']
+chat_gpt_models_list_v2 = ['gpt-4o','gpt-3.5-turbo', 'gpt-4-turbo-preview']
 # https://console.groq.com/settings/limits
 grok_models_list = ['llama3-8b-8192', 'gemma-7b-it', 'mixtral-8x7b-32768', 'llama3-70b-8192']
 
-all_models_list = ollama_models_list + grok_models_list + chat_gpt_models_list + ollama_langchain_models_list
+all_models_list = ollama_models_list + grok_models_list + chat_gpt_models_list + ollama_langchain_models_list + chat_gpt_models_list_v2

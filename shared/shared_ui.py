@@ -61,6 +61,9 @@ class SharedUi(ABC):
         self.st.session_state.questions = {}
         self.st.session_state.response = {}
         self.st.session_state.uploaded_files = {}
+        self.st.session_state.bibtext_found = True
+        self.st.session_state.selected_models = ['gpt-4o', 'llama3-70b-8192']
+        self.st.session_state.selected_modes = ["context"]
         self.refresh_document_data(current_file)
         
     def initialize_website(self):
