@@ -1,10 +1,9 @@
 GENERATE_QUESTION_TEMPLATE = """
-You are a mycobacterium professional in the medical field.
+You are a professional in making question from a given context.
 
-Generate a question based on the following context, the question should be creative and aligns with the context. 
+Generate a question based on the the context given below, the question should aligns with the context. Create the question so that the answer is from the context only and no external knowledge is needed. 
 
-__CONTEXT__
-
+this is the context that you should use: ''' __CONTEXT__ '''
 
 Respond only with the generated question as a json format like follow:
     

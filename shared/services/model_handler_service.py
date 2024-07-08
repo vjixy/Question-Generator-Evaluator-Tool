@@ -85,7 +85,7 @@ class ModelHandlerService(ABC):
                 
     def prompt_adjustment(self, response_type, context: str, question: str):
         if response_type == "question":
-            return GENERATE_QUESTION_TEMPLATE.replace("__QUESTION__", question)
+            return GENERATE_QUESTION_TEMPLATE.replace("__CONTEXT__", question)
         if response_type == "context":
             return GENERATE_ANSWER_FROM_CONTEXT_TEMPLATE.replace("__CONTEXT__", context).replace("__QUESTION__", question)
         if response_type == "default":
