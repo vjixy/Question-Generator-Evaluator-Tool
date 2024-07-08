@@ -100,7 +100,7 @@ if uploaded_file is not None:
             sql_service.add_document(uploaded_file.name, len(st.session_state.uploaded_files[selected_document]))
             st.session_state.document_valid = True
 else:
-    st.error("Please upload a document to start")
+    st.error("<- Please change your username then upload a document to start")
 if not st.session_state.bibtext_found:
     st.error("DOI Not Found Insert A Document With A Valid Reference")
 if user_name:
