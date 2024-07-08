@@ -3,6 +3,6 @@ ollama_models_list = ['llama3']
 chat_gpt_models_list = ['gpt-3.5-turbo-instruct']
 chat_gpt_models_list_v2 = ['gpt-4o','gpt-3.5-turbo', 'gpt-4-turbo-preview']
 # https://console.groq.com/settings/limits
-grok_models_list = ['llama3-8b-8192', 'gemma-7b-it', 'mixtral-8x7b-32768', 'llama3-70b-8192']
+grok_models_list = ['gemma2-9b-it', 'llama3-8b-8192', 'gemma-7b-it', 'mixtral-8x7b-32768', 'llama3-70b-8192']
 
 all_models_list = ollama_models_list + grok_models_list + chat_gpt_models_list + ollama_langchain_models_list + chat_gpt_models_list_v2
