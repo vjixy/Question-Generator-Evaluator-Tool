@@ -78,8 +78,8 @@ class ModelHandlerService(ABC):
             return json.loads(prompt)[response_type]
         except:
             try:
-                prompt_v2 = "{"+prompt.split("{")[-1].split("}")[0]+"}"
-                return json.loads(prompt_v2)[response_type]
+                prompt = "{"+prompt.split("{")[-1].split("}")[0]+"}"
+                return json.loads(prompt)[response_type]
             except:
                 return prompt
                 

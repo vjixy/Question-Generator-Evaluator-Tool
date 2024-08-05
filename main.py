@@ -166,7 +166,7 @@ if st.session_state.texts:
                 with st.spinner(f'Waiting for {selected_model} question...'):
                     prompt = model_handler_service.prompt_adjustment("question", "", st.session_state.texts[st.session_state.current_index])
                     questions = model_handler_service.adjust_prompt_response(model_handler_service.predict(selected_model ,prompt, st.session_state[selected_model]), "question")
-                    
+                    questions = questions.replace("{","").replace("}","")
                     st.session_state.questions[current_file][current_index][selected_model] = questions
 
                     sql_service.add_rating(user_name, st.session_state.current_file, st.session_state.current_index, None, st.session_state.questions[current_file][current_index][selected_model], selected_model)
@@ -222,6 +222,7 @@ if st.session_state.texts:
 
                                     prompt = model_handler_service.prompt_adjustment(response_type, st.session_state.texts[st.session_state.current_index], question)
                                     response = model_handler_service.adjust_prompt_response(model_handler_service.predict(selected_model ,prompt, st.session_state[selected_model]),"answer")
+                                    response = response.replace("{","").replace("}","")
                                     st.session_state.response[current_file][current_index][model_name][selected_model][response_type] = response
                                     
                                     sql_service.add_response(user_name, st.session_state.current_file, st.session_state.current_index, model_name,  response, selected_model, response_type, None)
