@@ -4,7 +4,7 @@ from openai import OpenAI as openAI_v2
 from langchain_community.llms.openai import OpenAI as openAI_v1
 import ollama
 from groq import Groq
-from shared.shared_variables import chat_gpt_models_list, ollama_models_list, grok_models_list, chat_gpt_models_list_v2
+from shared.shared_variables import chat_gpt_models_list, ollama_models_list, grok_models_list, chat_gpt_models_list_v2, ollama_langchain_models_list
 from langchain_community.utilities import SerpAPIWrapper
 import streamlit
 from shared.templates.prompts import GENERATE_ANSWER_TEMPLATE, GENERATE_ANSWER_FROM_CONTEXT_TEMPLATE, GENERATE_ANSWER_FROM_INTERNET_CONTENT_TEMPLATE, GENERATE_QUESTION_TEMPLATE, GENERATE_ANSWER_FROM_CONTEXT_AND_INTERNET_CONTENT_TEMPLATE
@@ -65,7 +65,7 @@ class ModelHandlerService(ABC):
     def load_pretrained_model(self, st: streamlit, model_name: str):
         if model_name in chat_gpt_models_list:
             return self._load_open_ai_model(model_name)
-        if model_name in ollama_models_list:
+        if model_name in ollama_models_list or model_name in ollama_langchain_models_list:
             try:
                 return self._load_ollama_model(model_name)
             except:

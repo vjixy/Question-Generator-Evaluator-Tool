@@ -125,6 +125,17 @@ def next_text():
 def previous_text():
     if st.session_state.current_index > 0:
         st.session_state.current_index -= 1
+        
+def _initialize_rating(current_file, current_index, model_name, selected_model, response_type):
+    if current_file not in st.session_state.rating:
+        st.session_state.rating[current_file] = {}
+    if current_index not in st.session_state.rating[current_file]:
+        st.session_state.rating[current_file][current_index] = {}
+    if model_name not in st.session_state.rating[current_file][current_index]:
+        st.session_state.rating[current_file][current_index][model_name] = {}
+    if selected_model not in st.session_state.rating[current_file][current_index][model_name]:
+        st.session_state.rating[current_file][current_index][model_name][selected_model] = {}
+        st.session_state.rating[current_file][current_index][model_name][selected_model][response_type] = None
 
 # Display the current text
 if st.session_state.texts:
@@ -160,7 +171,6 @@ if st.session_state.texts:
 
                     sql_service.add_rating(user_name, st.session_state.current_file, st.session_state.current_index, None, st.session_state.questions[current_file][current_index][selected_model], selected_model)
             question = st.session_state.questions[current_file][current_index][selected_model]
-            current_feedback = st.session_state.feedback[current_file][current_index][selected_model]
             col_1, col_2 = st.columns([0.35, 1])
             
             st.write(question)
@@ -168,11 +178,24 @@ if st.session_state.texts:
                 st.session_state.feedback[current_file][current_index][selected_model] = st.session_state["rating_"+selected_model]
                 sql_service.update_rating(user_name, st.session_state.current_file, st.session_state.current_index, st.session_state["rating_"+selected_model], st.session_state.questions[current_file][current_index][selected_model], selected_model)
             
+            col_rating, col_reset = st.columns([4, 1])
+            with col_reset:
+                if st.button('Reset Rating', key=f'reset_rating_{selected_model}'):
+                    st.session_state[f'rating_{selected_model}'] = None
+                    st.session_state.feedback[current_file][current_index][selected_model] = None
+                    
+                    sql_service.update_rating(user_name, st.session_state.current_file, st.session_state.current_index, st.session_state["rating_"+selected_model], st.session_state.questions[current_file][current_index][selected_model], selected_model)
+                    
+            
+            current_feedback = st.session_state.feedback[current_file][current_index][selected_model]
+            
             if current_feedback:
                 current_feedback-=1
+                    
+            with col_rating:
+                rating = st.radio("rating", [1,2,3,4,5], key=f'rating_{selected_model}', horizontal= True, index=current_feedback, on_change=partial(vote, current_index, selected_model ))
             
-            rating = st.radio("rating", [1,2,3,4,5], key=f'rating_{selected_model}', horizontal= True, index=current_feedback, on_change=partial(vote, current_index, selected_model ))
-
+                    
             if rating and rating>=minimum_rating:
     
                 if current_index in st.session_state.questions[current_file]:
@@ -193,6 +216,7 @@ if st.session_state.texts:
                         for response_type in st.session_state.selected_modes:
                             st.divider() 
                             if response_type not in st.session_state.response[current_file][current_index][model_name][selected_model]:
+                                _initialize_rating(current_file, current_index, model_name, selected_model, response_type)
                                 
                                 with st.spinner(f'Waiting for {selected_model} response...'):
 
@@ -203,10 +227,7 @@ if st.session_state.texts:
                                     sql_service.add_response(user_name, st.session_state.current_file, st.session_state.current_index, model_name,  response, selected_model, response_type, None)
                             
                             response = st.session_state.response[current_file][current_index][model_name][selected_model][response_type]
-                            try:
-                                current_rating = st.session_state.rating[current_file][current_index][model_name][selected_model][response_type]
-                            except:
-                                current_rating = None
+                            
                             st.caption(selected_model + ", generation type: " + str(response_type))
                             st.write(response)
                             
@@ -222,10 +243,25 @@ if st.session_state.texts:
                                 st.session_state.rating[current_file][current_index][model_name][selected_model][response_type] = st.session_state[f'rating_{model_name}_{selected_model}_{response_type}']
                                 sql_service.update_response(user_name, st.session_state.current_file, st.session_state.current_index, model_name, st.session_state.response[current_file][current_index][model_name][selected_model][response_type], selected_model, response_type, int(st.session_state[f'rating_{model_name}_{selected_model}_{response_type}']))
                             
+                            col_rating_response, col_reset_response = st.columns([4, 1])
+                            with col_reset_response:
+                                if st.button('Reset Rating', key=f'rest_response_button_rating_{model_name}_{selected_model}_{response_type}'):
+                                    st.session_state[f'rating_{model_name}_{selected_model}_{response_type}'] = None
+                                    st.session_state.rating[current_file][current_index][model_name][selected_model][response_type] = None
+                                    sql_service.update_response(user_name, st.session_state.current_file, st.session_state.current_index, model_name, st.session_state.response[current_file][current_index][model_name][selected_model][response_type], selected_model, response_type, st.session_state[f'rating_{model_name}_{selected_model}_{response_type}'])
+                                    
+                            
+                            try:
+                                current_rating = st.session_state.rating[current_file][current_index][model_name][selected_model][response_type]
+                            except:
+                                current_rating = None
                             if current_rating:
                                 current_rating-=1
+                                
                             
-                            st.radio("rating", [nb for nb in range(1, max_feed_back_number+1)], key=f'rating_{model_name}_{selected_model}_{response_type}', horizontal= True, index=current_rating, on_change=partial(update_response_vote, current_index, model_name, selected_model, response_type)) 
+                                    
+                            with col_rating_response:
+                                st.radio("rating", [nb for nb in range(1, max_feed_back_number+1)], key=f'rating_{model_name}_{selected_model}_{response_type}', horizontal= True, index=current_rating, on_change=partial(update_response_vote, current_index, model_name, selected_model, response_type)) 
                             
 def export_data():
 
@@ -242,20 +278,27 @@ def export_data():
         for model_name in st.session_state.questions[current_file][index]:
             question_rating = st.session_state.feedback[current_file][index][model_name]
             question_rating = question_rating if question_rating else 0
+            if int(question_rating) == 0:
+                continue
+            
+            file_name_list.append(current_file)
+            contexts_list.append(st.session_state.texts[int(index)])
+            questions_list.append(st.session_state.questions[current_file][index][model_name])
+            questions_rating_list.append(question_rating)
+            model_used_to_generate_question_list.append(model_name)
+            answers_list.append(None)
+            answers_rating_list.append(None)
+            response_type_list.append(None)
+            model_used_to_generate_answer_list.append(None)
+                
             if int(question_rating) < minimum_rating:
-                file_name_list.append(current_file)
-                contexts_list.append(st.session_state.texts[int(index)])
-                questions_list.append(st.session_state.questions[current_file][index][model_name])
-                questions_rating_list.append(question_rating)
-                model_used_to_generate_question_list.append(model_name)
-                answers_list.append(None)
-                answers_rating_list.append(None)
-                response_type_list.append(None)
-                model_used_to_generate_answer_list.append(None)
                 continue
             for selected_model in st.session_state.response[current_file][index][model_name]:
                 for response_type in st.session_state.response[current_file][index][model_name][selected_model]:
                     response_rating = st.session_state.rating[current_file][index][model_name][selected_model][response_type]
+                    response_rating = response_rating if response_rating else 0
+                    if response_rating == 0:
+                        continue
                     file_name_list.append(current_file)
                     contexts_list.append(st.session_state.texts[int(index)])
                     questions_list.append(st.session_state.questions[current_file][index][model_name])
